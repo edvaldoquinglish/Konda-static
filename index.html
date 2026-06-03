@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konda Academy | Aprenda • Evolua • Conquiste</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 text-[#0A2342] font-sans antialiased">
+
+    <!-- NAVBAR -->
+    <header class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-xl font-black tracking-wider text-[#0A2342]">KONDA</span>
+                <span class="px-2 py-0.5 bg-[#D4A017] text-white text-xs font-bold rounded">ACADEMY</span>
+            </div>
+            <nav class="flex items-center gap-6 text-sm font-semibold">
+                <a href="#cursos-section" class="hover:text-[#D4A017] transition-colors">Cursos</a>
+                <a href="#livros-section" class="hover:text-[#D4A017] transition-colors">Biblioteca</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="bg-gradient-to-b from-[#0A2342] to-[#123661] text-white py-16 px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <span class="bg-white/10 text-[#D4A017] text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full border border-white/10">
+                Plataforma Homologada
+            </span>
+            <h1 class="text-3xl sm:text-5xl font-extrabold mt-4 mb-4">Aprenda • Evolua • Conquiste</h1>
+            <p class="text-gray-300 text-sm sm:text-base">A maior curadoria de conteúdo técnico com selos de validação das plataformas líderes mundiais.</p>
+        </div>
+    </section>
+
+    <!-- CONTEÚDO -->
+    <main class="max-w-7xl mx-auto px-4 py-12">
+        
+        <!-- CURSOS -->
+        <section id="cursos-section" class="mb-16">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 pb-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-[#0A2342]">Cursos Multiplataforma</h2>
+                    <p class="text-xs text-gray-500">Identifique a origem do conteúdo através das insígnias oficiais de cada provedor.</p>
+                </div>
+                <select id="filter-preco" onchange="renderizarCursos()" class="mt-2 sm:mt-0 bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0A2342]">
+                    <option value="todos">Todos os Preços</option>
+                    <option value="gratis">Apenas Gratuitos (YouTube)</option>
+                    <option value="pagos">Apenas Premium (Plataformas)</option>
+                </select>
+            </div>
+            <div id="grid-cursos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- LIVROS -->
+        <section id="livros-section">
+            <div class="border-b border-gray-200 pb-4 mb-6">
+                <h2 class="text-2xl font-bold text-[#0A2342]">Biblioteca Digital</h2>
+                <p class="text-xs text-gray-500">Acesso a ficheiros e-books hospedados de forma segura na CDN.</p>
+            </div>
+            <div id="grid-livros" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </section>
+    </main>
+
+    <script src="data.js"></script>
+    <script>
+        function obterBadgeProvedor(provider) {
+            // Retorna a marca visual específica de cada plataforma para gerar semelhança imediata
+            switch(provider) {
+                case 'youtube':
+                    return `<span class="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded flex items-center gap-1 shadow-sm">
+                                <span class="text-xs">▶</span> YOUTUBE GRÁTIS
+                            </span>`;
+                case 'udemy':
+                    return `<span class="bg-[#A435F0] text-white text-[10px] font-black px-2 py-1 rounded flex items-center gap-1 shadow-sm">
+                                <span>🔲</span> UDEMY PREMIUM
+                            </span>`;
+                case 'coursera':
+                    return `<span class="bg-[#0056B3] text-white text-[10px] font-black px-2 py-1 rounded flex items-center gap-1 shadow-sm">
+                                <span>🎓</span> COURSERA CERTIFIED
+                            </span>`;
+                case 'hotmart':
+                    return `<span class="bg-[#F04E23] text-white text-[10px] font-black px-2 py-1 rounded flex items-center gap-1 shadow-sm">
+                                <span>🔥</span> HOTMART HUB
+                            </span>`;
+                case 'solidtecn':
+                    return `<span class="bg-[#0A2342] text-[#D4A017] text-[10px] font-black px-2 py-1 rounded border border-[#D4A017] flex items-center gap-1 shadow-sm">
+                                <span>🛡️</span> SOLIDTECN SPECIAL
+                            </span>`;
+                default:
+                    return `<span class="bg-gray-600 text-white text-[10px] font-bold px-2 py-1 rounded">CURSO</span>`;
+            }
+        }
+
+        function renderizarCursos() {
+            const grid = document.getElementById('grid-cursos');
+            const filtro = document.getElementById('filter-preco').value;
+            grid.innerHTML = '';
+
+            KONDA_DATA.cursos.forEach(curso => {
+                if (filtro === 'gratis' && curso.price > 0) return;
+                if (filtro === 'pagos' && curso.price === 0) return;
+
+                const providerBadge = obterBadgeProvedor(curso.provider);
+                const precoTexto = curso.price === 0 ? "Acesso Livre" : `${curso.price} USD`;
+
+                grid.innerHTML += `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div class="relative">
+                            <img src="${curso.thumbnail}" alt="${curso.title}" class="w-full h-44 object-cover">
+                            <div class="absolute top-3 left-3 flex flex-col gap-1">
+                                ${providerBadge}
+                            </div>
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[10px] font-bold text-[#D4A017] uppercase tracking-wider">${curso.category}</span>
+                                <h3 class="font-bold text-base mt-1 mb-2 text-[#0A2342] line-clamp-2 leading-snug">${curso.title}</h3>
+                                <p class="text-xs text-gray-500">Autor/Canal: <span class="font-medium text-gray-700">${curso.instructor}</span></p>
+                            </div>
+                            <div class="mt-5 pt-4 border-t border-gray-50 flex items-center justify-between">
+                                <span class="text-sm font-bold text-gray-900">${precoTexto}</span>
+                                <a href="${curso.link}" target="_blank" class="bg-[#0A2342] text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all shadow-sm">
+                                    Ir para Curso ↗
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderizarLivros() {
+            const grid = document.getElementById('grid-livros');
+            grid.innerHTML = '';
+
+            KONDA_DATA.livros.forEach(livro => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between p-3 hover:shadow-md transition-shadow">
+                        <img src="${livro.cover}" alt="${livro.title}" class="w-full h-48 object-cover rounded-lg">
+                        <div class="mt-3 flex-1 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[10px] text-[#D4A017] font-bold uppercase tracking-wider">${livro.category}</span>
+                                <h3 class="font-bold text-sm text-[#0A2342] line-clamp-2 mt-1 leading-tight">${livro.title}</h3>
+                                <p class="text-[11px] text-gray-500 mt-0.5">Autor: ${livro.author}</p>
+                            </div>
+                            <a href="${livro.downloadUrl}" download class="block text-center border border-[#0A2342] text-[#0A2342] text-xs font-bold py-2 rounded-lg mt-4 hover:bg-[#0A2342] hover:text-white transition-all">
+                                Baixar PDF
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        window.onload = function() {
+            renderizarCursos();
+            renderizarLivros();
+        };
+    </script>
+</body>
+</html>
